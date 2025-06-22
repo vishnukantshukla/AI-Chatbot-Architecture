@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot System Architecture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .title {
+            text-align: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+        }
+
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            position: relative;
+        }
+
+        .flow-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+            position: relative;
+        }
+
+        .node {
+            background: linear-gradient(145deg, #ffffff, #f0f0f0);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            min-width: 200px;
+            text-align: center;
+            border: 3px solid transparent;
+        }
+
+        .node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-node {
+            background: linear-gradient(145deg, #4facfe, #00f2fe);
+            color: white;
+            border-color: #00c6ff;
+        }
+
+        .frontend-node {
+            background: linear-gradient(145deg, #43e97b, #38f9d7);
+            color: #2c3e50;
+            border-color: #00d4aa;
+        }
+
+        .backend-node {
+            background: linear-gradient(145deg, #fa709a, #fee140);
+            color: white;
+            border-color: #ff6b9d;
+        }
+
+        .database-node {
+            background: linear-gradient(145deg, #a8edea, #fed6e3);
+            color: #2c3e50;
+            border-color: #74b9ff;
+        }
+
+        .ai-node {
+            background: linear-gradient(145deg, #d299c2, #fef9d7);
+            color: #2c3e50;
+            border-color: #fd79a8;
+        }
+
+        .security-node {
+            background: linear-gradient(145deg, #89f7fe, #66a6ff);
+            color: white;
+            border-color: #0984e3;
+        }
+
+        .node-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .node-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .node-details {
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .arrow {
+            position: relative;
+            color: white;
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        .arrow-vertical {
+            transform: rotate(90deg);
+        }
+
+        .arrow-horizontal {
+            transform: rotate(0deg);
+        }
+
+        .flow-label {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .step-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .step-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+        }
+
+        .step-number {
+            display: inline-block;
+            background: linear-gradient(145deg, #ff6b9d, #c44569);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .step-title {
+            color: white;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .step-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .tech-stack {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .tech-stack h3 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .tech-badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .flow-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .arrow-horizontal {
+                transform: rotate(90deg);
+            }
+            
+            .node {
+                min-width: 250px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🤖 AI Chatbot System Architecture</h1>
+        <p class="subtitle">Complete Flow from User Authentication to AI Response Generation</p>
+        
+        <div class="flowchart">
+            <!-- User Section -->
+            <div class="flow-section">
+                <div class="node user-node">
+                    <div class="node-title">👤 User</div>
+                    <div class="node-subtitle">Client Interface</div>
+                    <div class="node-details">
+                        • Sign Up / Sign In<br>
+                        • Chat Interactions<br>
+                        • Response Viewing
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow arrow-vertical">⬇</div>
+            <div class="flow-label" style="top: -10px;">Authentication Request</div>
+
+            <!-- Frontend + Security Section -->
+            <div class="flow-section">
+                <div class="node frontend-node">
+                    <div class="node-title">⚛️ Frontend</div>
+                    <div class="node-subtitle">React.js + TypeScript</div>
+                    <div class="node-details">
+                        • TypeScript Components<br>
+                        • Redux State Management<br>
+                        • Form Validation<br>
+                        • API Integration<br>
+                        • Type Safety
+                    </div>
+                </div>
+
+                <div class="arrow arrow-horizontal">⟷</div>
+                <div class="flow-label" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">JWT Token</div>
+
+                <div class="node security-node">
+                    <div class="node-title">🔐 Security Layer</div>
+                    <div class="node-subtitle">httpOnly Cookies</div>
+                    <div class="node-details">
+                        • JWT Storage<br>
+                        • Token Validation<br>
+                        • Session Management<br>
+                        • CSRF Protection
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow arrow-vertical">⬇</div>
+            <div class="flow-label" style="top: -10px;">API Requests</div>
+
+            <!-- Backend Section -->
+            <div class="flow-section">
+                <div class="node backend-node">
+                    <div class="node-title">🚀 Backend API</div>
+                    <div class="node-subtitle">Node.js / Express + TypeScript</div>
+                    <div class="node-details">
+                        • TypeScript Routes<br>
+                        • Middleware Processing<br>
+                        • Type-Safe APIs<br>
+                        • Authentication Logic<br>
+                        • Response Formatting
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow arrow-vertical">⬇</div>
+            <div class="flow-label" style="top: -10px;">Data Operations</div>
+
+            <!-- Database Section -->
+            <div class="flow-section">
+                <div class="node database-node">
+                    <div class="node-title">🗄️ MongoDB</div>
+                    <div class="node-subtitle">User Database</div>
+                    <div class="node-details">
+                        • User Profiles<br>
+                        • Authentication Data<br>
+                        • Chat History<br>
+                        • Session Storage
+                    </div>
+                </div>
+            </div>
+
+            <div class="arrow arrow-vertical">⬇</div>
+            <div class="flow-label" style="top: -10px;">Protected Chat Route</div>
+
+            <!-- AI Model Section -->
+            <div class="flow-section">
+                <div class="node ai-node">
+                    <div class="node-title">🧠 AI Model</div>
+                    <div class="node-subtitle">Generative AI API</div>
+                    <div class="node-details">
+                        • OpenAI GPT<br>
+                        • Google Gemini<br>
+                        • Claude API<br>
+                        • Custom Models
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Process Steps -->
+        <div class="process-steps">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-title">User Authentication</div>
+                <div class="step-description">User signs up or logs in through the React frontend. Credentials are validated and JWT tokens are generated for secure session management.</div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-title">State Management & Type Safety</div>
+                <div class="step-description">Redux manages global application state with TypeScript ensuring type safety. JWT tokens are stored in httpOnly cookies with proper type definitions for secure session management.</div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-title">Database Operations</div>
+                <div class="step-description">User data is stored and retrieved from MongoDB. This includes user profiles, authentication details, and chat history for personalization.</div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <div class="step-title">Protected Routes</div>
+                <div class="step-description">Chat functionality is protected by middleware that validates JWT tokens. Only authenticated users can access AI chat features.</div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">5</div>
+                <div class="step-title">AI Processing</div>
+                <div class="step-description">User prompts are forwarded to the selected AI model (OpenAI, Gemini, etc.). The AI processes the request and generates contextual responses.</div>
+            </div>
+
+            <div class="step-card">
+                <div class="step-number">6</div>
+                <div class="step-title">Response Delivery</div>
+                <div class="step-description">AI responses are formatted and sent back through the backend API to the frontend, where they're rendered in the chat interface.</div>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="tech-stack">
+            <h3>🛠️ Technology Stack</h3>
+            <div class="tech-badges">
+                <span class="tech-badge">React.js</span>
+                <span class="tech-badge">TypeScript</span>
+                <span class="tech-badge">Redux</span>
+                <span class="tech-badge">Node.js</span>
+                <span class="tech-badge">Express.js</span>
+                <span class="tech-badge">MongoDB</span>
+                <span class="tech-badge">JWT</span>
+                <span class="tech-badge">OpenAI API</span>
+                <span class="tech-badge">Google Gemini</span>
+                <span class="tech-badge">RESTful API</span>
+                <span class="tech-badge">HTTP Cookies</span>
+                <span class="tech-badge">Middleware</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactive hover effects
+        document.querySelectorAll('.node').forEach(node => {
+            node.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            node.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+
+        // Add click animation for step cards
+        document.querySelectorAll('.step-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-3px)';
+                }, 150);
+            });
+        });
+
+        // Animate arrows on page load
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.arrow').forEach((arrow, index) => {
+                arrow.style.animationDelay = `${index * 0.5}s`;
+            });
+        });
+    </script>
+</body>
+</html>
